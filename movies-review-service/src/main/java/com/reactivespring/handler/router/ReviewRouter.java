@@ -1,4 +1,4 @@
-package com.reactivespring.router;
+package com.reactivespring.handler.router;
 
 import com.reactivespring.handler.ReviewHandler;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +20,7 @@ public class ReviewRouter {
                         .GET("", reviewHandler::getReviews)
                         .PUT("/{id}", reviewHandler::updateReview)
                         .DELETE("/{id}", reviewHandler::deleteReview)
+                        .GET("/stream", reviewHandler::getReviewsStream)
                 )
                 .GET("/v1/helloworld", (request -> ServerResponse.ok().bodyValue("helloworld")))
                 .build();

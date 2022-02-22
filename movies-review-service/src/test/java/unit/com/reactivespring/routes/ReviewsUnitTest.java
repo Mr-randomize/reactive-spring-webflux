@@ -4,7 +4,7 @@ import com.reactivespring.domain.Review;
 import com.reactivespring.exceptionhandler.GlobalErrorHandler;
 import com.reactivespring.handler.ReviewHandler;
 import com.reactivespring.repository.ReviewReactorRepository;
-import com.reactivespring.router.ReviewRouter;
+import com.reactivespring.handler.router.ReviewRouter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
