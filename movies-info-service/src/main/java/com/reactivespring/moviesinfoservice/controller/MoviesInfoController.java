@@ -40,6 +40,11 @@ public class MoviesInfoController {
 //        return movieInfoService.getMovieInfoById(id).log();
 //    }
 
+    @GetMapping(value = "/movieinfos/stream", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    public Flux<MovieInfo> streamMovieInfos() {
+
+        return moviesInfoSink.asFlux().log();
+    }
 
     @GetMapping("/movieinfos/{id}")
     public Mono<ResponseEntity<MovieInfo>> getMovieInfoById_approach2(@PathVariable("id") String id) {
@@ -51,11 +56,6 @@ public class MoviesInfoController {
                 .log();
     }
 
-    @GetMapping(value = "/movieinfos/stream", produces = MediaType.APPLICATION_NDJSON_VALUE)
-    public Flux<MovieInfo> getMovieInfoById(@PathVariable("id") String id) {
-
-        return moviesInfoSink.asFlux().log();
-    }
 
     @PostMapping("/movieinfos")
     @ResponseStatus(HttpStatus.CREATED)

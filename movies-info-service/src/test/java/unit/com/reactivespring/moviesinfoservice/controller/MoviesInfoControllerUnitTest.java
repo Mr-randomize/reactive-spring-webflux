@@ -53,6 +53,25 @@ class MoviesInfoControllerUnitTest {
     }
 
     @Test
+    void getMovieInfoById() {
+        var id = "abc";
+
+        when(movieInfoServiceMock.getMovieInfoById(isA(String.class)))
+                .thenReturn(Mono.just(new MovieInfo("abc", "Dark Knight Rises",
+                        2012, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2012-07-20"))));
+
+        webTestClient
+                .get()
+                .uri(MOVIES_INFO_URL + "/{id}", id)
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("Dark Knight Rises");
+
+    }
+
+    @Test
     void addMovieInfo() {
 
         var movieInfo = new MovieInfo(null, "Batman Begins",

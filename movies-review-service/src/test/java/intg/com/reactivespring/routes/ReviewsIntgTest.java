@@ -10,8 +10,10 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -74,6 +76,43 @@ public class ReviewsIntgTest {
                 .is2xxSuccessful()
                 .expectBodyList(Review.class)
                 .hasSize(3);
+
+    }
+
+    @Test
+    void getReviews_Stream() {
+
+        var review = new Review(null, 1L, "Awesome Movie", 9.0);
+
+        webTestClient
+                .post()
+                .uri(REVIEWS_URL)
+                .bodyValue(review)
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(Review.class)
+                .consumeWith(movieInfoEntityExchangeResult -> {
+                    var savedReview = movieInfoEntityExchangeResult.getResponseBody();
+                    assert Objects.requireNonNull(savedReview).getReviewId() != null;
+
+                });
+
+        var reviewStreamFlux = webTestClient
+                .get()
+                .uri(REVIEWS_URL + "/stream")
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .returnResult(Review.class)
+                .getResponseBody();
+
+        StepVerifier.create(reviewStreamFlux)
+                .assertNext(rev -> {
+                    assert rev.getReviewId()!=null;
+                })
+                .thenCancel()
+                .verify();
 
     }
 
@@ -166,18 +205,4 @@ public class ReviewsIntgTest {
                 .expectStatus().isNotFound();
     }
 
-    @Test
-    void error() {
-        //given
-
-        //when
-
-        webTestClient
-                .get()
-                .uri("/v1/error")
-                .exchange()
-                .expectStatus()
-                .is5xxServerError();
-
-    }
 }

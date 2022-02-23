@@ -1,4 +1,4 @@
-package com.reactivespring.handler.router;
+package com.reactivespring.router;
 
 import com.reactivespring.handler.ReviewHandler;
 import org.springframework.context.annotation.Bean;

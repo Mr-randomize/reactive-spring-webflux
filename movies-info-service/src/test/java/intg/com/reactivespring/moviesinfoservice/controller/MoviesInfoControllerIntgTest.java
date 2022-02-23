@@ -16,6 +16,7 @@ import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,12 +76,13 @@ class MoviesInfoControllerIntgTest {
     }
 
     @Test
-    void getAllMovieInfos_stream() {
+    void getAllMovieInfos_Stream() {
 
         var movieInfo = new MovieInfo(null, "Batman Begins",
                 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
 
-        webTestClient.post()
+        webTestClient
+                .post()
                 .uri(MOVIES_INFO_URL)
                 .bodyValue(movieInfo)
                 .exchange()
@@ -89,12 +91,12 @@ class MoviesInfoControllerIntgTest {
                 .expectBody(MovieInfo.class)
                 .consumeWith(movieInfoEntityExchangeResult -> {
                     var savedMovieInfo = movieInfoEntityExchangeResult.getResponseBody();
+                    assert Objects.requireNonNull(savedMovieInfo).getMovieInfoId() != null;
 
-                    assert savedMovieInfo != null;
-                    assert savedMovieInfo.getMovieInfoId() != null;
                 });
 
-        var moviesStreamFlux = webTestClient.get()
+        var moviesStreamFlux = webTestClient
+                .get()
                 .uri(MOVIES_INFO_URL + "/stream")
                 .exchange()
                 .expectStatus()
@@ -104,7 +106,7 @@ class MoviesInfoControllerIntgTest {
 
         StepVerifier.create(moviesStreamFlux)
                 .assertNext(movieInfo1 -> {
-                    assert movieInfo1.getMovieInfoId() != null;
+                    assert movieInfo1.getMovieInfoId()!=null;
                 })
                 .thenCancel()
                 .verify();
@@ -160,6 +162,17 @@ class MoviesInfoControllerIntgTest {
     }
 
     @Test
+    void getMovieInfoById_1() {
+        var id = "def";
+        webTestClient
+                .get()
+                .uri(MOVIES_INFO_URL + "/{id}", id)
+                .exchange()
+                .expectStatus()
+                .isNotFound();
+    }
+
+    @Test
     void updateMovieInfo() {
 
         var movieInfoId = "abc";
@@ -200,7 +213,7 @@ class MoviesInfoControllerIntgTest {
     }
 
     @Test
-    void deleteMovieInfo() {
+    void deleteMovieInfoById() {
 
         var movieInfoId = "abc";
 

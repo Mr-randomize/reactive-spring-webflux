@@ -16,7 +16,7 @@ public class MovieInfoService {
     }
 
     public Mono<MovieInfo> addMovieInfo(MovieInfo movieInfo) {
-        return movieInfoRepository.save(movieInfo);
+        return movieInfoRepository.save(movieInfo).log();
     }
 
     public Flux<MovieInfo> getAllMovieInfos() {

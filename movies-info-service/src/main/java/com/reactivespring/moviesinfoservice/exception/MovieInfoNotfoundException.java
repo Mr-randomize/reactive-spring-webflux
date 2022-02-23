@@ -1,4 +1,4 @@
-package com.reactivespring.exception;
+package com.reactivespring.moviesinfoservice.exception;
 
 public class MovieInfoNotfoundException extends RuntimeException{
     private String message;

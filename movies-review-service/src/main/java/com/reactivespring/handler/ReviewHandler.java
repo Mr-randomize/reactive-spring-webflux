@@ -52,6 +52,7 @@ public class ReviewHandler {
                     .map(ConstraintViolation::getMessage)
                     .sorted()
                     .collect(Collectors.joining(","));
+            log.info("errorMessage : {} ", errorMessage);
             throw new ReviewDataException(errorMessage);
         }
     }

@@ -89,4 +89,27 @@ public class MoviesInfoRestClient {
                 .retryWhen(RetryUtil.retrySpec())
                 .log();
     }
+
+    public Mono<MovieInfo> retrieveMovieInfo_exchange(String movieId) {
+
+        var url = moviesInfoUrl.concat("/{id}");
+
+        return webClient.get()
+                .uri(url, movieId)
+                .exchangeToMono(clientResponse -> {
+
+                    switch (clientResponse.statusCode()) {
+                        case OK:
+                            return clientResponse.bodyToMono(MovieInfo.class);
+                        case NOT_FOUND:
+                            return Mono.error(new MoviesInfoClientException("There is no MovieInfo available for the passed in Id : " + movieId, clientResponse.statusCode().value()));
+                        default:
+                            return clientResponse.bodyToMono(String.class)
+                                    .flatMap(response -> Mono.error(new MoviesInfoServerException(response)));
+                    }
+                })
+                .retryWhen(RetryUtil.retrySpec())
+                .log();
+
+    }
 }
